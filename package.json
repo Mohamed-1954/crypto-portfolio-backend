@@ -1,5 +1,5 @@
 {
-  "name": "exam-crypto",
+  "name": "crypto-portfolio-backend",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -10,6 +10,9 @@
     "dev": "tsx watch --clear-screen=false src/index.ts",
     "build": "tsup",
     "start": "node dist/index.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx src/db/migrate.ts",
+    "db:seed": "src/db/seed.ts",
     "lint": "biome check src/",
     "lint:fix": "biome check src/ --fix",
     "format": "biome format src/"

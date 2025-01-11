@@ -1,9 +1,9 @@
 import { relations } from "drizzle-orm";
-import { integer, pgTable, serial, timestamp, varchar } from "drizzle-orm/pg-core";
+import { integer, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import portfolio from "./portfolio";
 
-const portfolioItem = pgTable("portfolio_item", {
-  id: serial("id").primaryKey(),
+const portfolioItem = pgTable("portfolio_items", {
+  id: uuid("id").primaryKey().defaultRandom(),
   portfolioId: integer("portfolio_id").references(() => portfolio.id, {onDelete: "cascade"}),
   cryptoId: varchar("crypto_id", { length: 255 }).notNull().unique(),
   quantity: integer("quantity").notNull(),

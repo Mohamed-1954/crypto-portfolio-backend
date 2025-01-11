@@ -2,15 +2,15 @@ import { relations } from "drizzle-orm";
 import {
   integer,
   pgTable,
-  serial,
   timestamp,
+  uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 import portfolioItem from "./portfolio-item";
 import user from "./user";
 
-const portfolio = pgTable("portfolio", {
-  id: serial("id").primaryKey(),
+const portfolio = pgTable("portfolios", {
+  id: uuid("id").primaryKey().defaultRandom(),
   userId: integer("user_id").references(() => user.id, {onDelete: "cascade"}),
   name: varchar("name", { length: 255 }).notNull(),
   createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
