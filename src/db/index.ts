@@ -4,7 +4,7 @@ import { Pool } from "pg";
 import * as schema from "@/db/schema";
 import config from "@/config/config";
 
-const pool = new Pool({
+export const pool = new Pool({
   connectionString: config.database.url,
 });
 

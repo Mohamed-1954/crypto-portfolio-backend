@@ -22,7 +22,8 @@
     "rules": {
       "recommended": true,
       "style": {
-        "noUselessElse": "off"
+        "noUselessElse": "off",
+        "useImportType": "info"
       },
       "complexity": {
         "noForEach": "off"

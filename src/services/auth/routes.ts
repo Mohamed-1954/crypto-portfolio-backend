@@ -1,5 +1,10 @@
-import { Router } from "express"
+import { Router } from "express";
+import { signIn, signUp } from "./handlers";
 
-const authServiceRouter = Router();
+const router = Router();
 
-// AuthServiceRouter.post()
+router.post("/sign-up", signUp);
+
+router.post("/sign-in", signIn);
+
+export default router;

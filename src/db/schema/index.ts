@@ -1,3 +1,3 @@
-export { default as user, userRelations } from "./user";
-export { default as portfolio, portfolioRelations } from "./portfolio";
-export { default as portfolioItem, portfolioItemRelations } from "./portfolio-item";
+export { default as users, userRelations } from "./user";
+export { default as portfolios, portfolioRelations } from "./portfolio";
+export { default as portfolioItems, portfolioItemRelations } from "./portfolio-item";

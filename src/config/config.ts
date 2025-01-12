@@ -15,7 +15,8 @@ const config = {
     url: env.DB_URL
   },
   jwt: {
-    secret: env.JWT_SECRET,
+    accessTokenSecret: env.JWT_ACCESS_SECRET,
+    refreshTokenSecret: env.JWT_REFRESH_SECRET,
   },
   coinMarketCap: {
     apiKey: env.CMC_API_KEY,
