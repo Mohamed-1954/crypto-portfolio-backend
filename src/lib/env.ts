@@ -11,6 +11,8 @@ const EnvSchema = z.object({
   DB_NAME: z.string(),
   DB_PORT: z.coerce.number(),
   DATABASE_URL: z.string(),
+  COINMARKET_API_KEY: z.string(),
+  COINMARKET_API_URL: z.string(),
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;
