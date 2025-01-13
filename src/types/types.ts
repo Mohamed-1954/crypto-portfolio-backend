@@ -9,8 +9,8 @@ export interface CryptoCurrency {
   total_supply: number;
   max_supply: number;
   infinite_supply: boolean;
-  last_updated: string; // ISO date string
-  date_added: string; // ISO date string
+  last_updated: string; 
+  date_added: string; 
   tags: string[];
   platform: null | string;
   self_reported_circulating_supply: null | number;
@@ -26,7 +26,7 @@ export interface CryptoCurrency {
       market_cap: number;
       market_cap_dominance: number;
       fully_diluted_market_cap: number;
-      last_updated: string; // ISO date string
+      last_updated: string; 
     };
   };
 }

@@ -8,7 +8,10 @@ import portfolioItemService from "@/services/portfolio-item/routes";
 import config from "./config/config";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-
+import swaggerUi from "swagger-ui-express";
+import fs from "node:fs";
+import yaml from "yaml";
+import path from "node:path";
 const app = express();
 
 app.use(cookieParser());
@@ -26,9 +29,19 @@ app.use(helmet());
 
 app.use("/auth", authService);
 app.use(ensureToken);
-app.use("/portfolio", portfolioService);
-app.use("/crypto", cryptoService);
+app.use("/portfolios", portfolioService);
+app.use("/cryptos", cryptoService);
 app.use("/portfolios/:id/items", portfolioItemService);
+
+const yamlFile = fs.readFileSync(path.join(__dirname, "./docs/swagger.yaml"), { encoding: "utf-8" });
+const swaggerOptions = yaml.parse(yamlFile);
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerOptions));
+
+app.get("/docs.json", (_, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerOptions);
+});
 
 app.listen(config.server.port, () => {
   console.log(`Server is running on port ${config.server.port}`);

@@ -8,23 +8,24 @@ import type {
   UpdateCryptoInPortfolioRequest,
 } from "./request-types";
 import { portfolios } from "@/db/schema";
-import { insertPortfolioItemSchema } from "./validations";
+import { insertPortfolioItemSchema, updatePortfolioItemSchema } from "./validations";
 import { z } from "zod";
 
 export const addCryptoToPortfolio = async (
   req: AddCryptoToPortfolioRequest,
   res: Response
 ) => {
+  const userId = req.user.id;
   const { error: paramsError, data: portfolioId } = z
     .string()
-    .safeParse(req.params);
+    .safeParse(req.params.id);
   if (paramsError) {
-    res.status(400).json({ error: "portfolio id is  required" });
+    res.status(400).json({ error: "portfolio id is required" });
     return;
   }
 
-  const { error: bodyError, data: validatedData } =
-    insertPortfolioItemSchema.safeParse(req.body);
+  const { error: bodyError, data: validatedData } = insertPortfolioItemSchema.safeParse(req.body);
+  console.log(bodyError);
   if (bodyError) {
     res
       .status(400)
@@ -36,7 +37,7 @@ export const addCryptoToPortfolio = async (
 
   try {
     const portfolioExists = await db.query.portfolios.findFirst({
-      where: eq(portfolios.id, portfolioId),
+      where: and(eq(portfolios.id, portfolioId), eq(portfolios.userId, userId)),
     });
 
     if (!portfolioExists) {
@@ -70,13 +71,14 @@ export const updateCryptoInPortfolio = async (
   const { error: paramsError, data: validatedParams } = z.object({
       id: z.string(),
       item_id: z.string(),
-    }).safeParse(req.params);
+    }).safeParse({ id: req.params.id, item_id: req.params.item_id });
   if (paramsError) {
     res.status(400).json({ error: "portfolio id is  required" });
     return;
   }
 
-  const { error: bodyError, data: validatedData } = insertPortfolioItemSchema.safeParse(req.body);
+  const { error: bodyError, data: validatedData } =
+    updatePortfolioItemSchema.safeParse(req.body);
   if (bodyError) {
     res
       .status(400)
@@ -86,11 +88,11 @@ export const updateCryptoInPortfolio = async (
 
   try {
     const itemExists = await db.query.portfolioItems.findFirst({
-      where: and(
+      where: (portfolioItems, { eq, and }) => and(
         eq(portfolioItems.id, validatedParams.item_id),
         eq(portfolioItems.portfolioId, validatedParams.id)
       ),
-    });
+    })
 
     if (!itemExists) {
       res.status(404).json({ error: "Portfolio item not found" });
@@ -123,7 +125,7 @@ export const deleteCryptoFromPortfolio = async (
       id: z.string(),
       item_id: z.string(),
     })
-    .safeParse(req.params);
+    .safeParse({ id: req.params.id, item_id: req.params.item_id });
   if (paramsError) {
     res.status(400).json({ error: "portfolio id is  required" });
     return;
@@ -133,7 +135,7 @@ export const deleteCryptoFromPortfolio = async (
     const itemExists = await db.query.portfolioItems.findFirst({
       where: and(
         eq(portfolioItems.id, validatedParams.item_id),
-        eq(portfolioItems.portfolioId, validatedParams.id)
+        eq(portfolioItems.portfolioId, validatedParams.id),
       ),
     });
 

@@ -2,7 +2,6 @@ import type { Request } from "express";
 
 export interface SignUpRequest extends Request {
   body: {
-    // requires more attributes later
     email: string;
     password: string;
   };

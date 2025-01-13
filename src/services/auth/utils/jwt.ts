@@ -33,6 +33,7 @@ export async function verifyJwt({ token = "", secret }: VerifyJwt) {
     });
     return payload as SignJwt["user"];
   } catch (error) {
+    if (error instanceof Error)
     console.error("Failed to verify session", error);
     return null;
   }
