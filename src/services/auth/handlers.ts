@@ -143,9 +143,10 @@ export const refreshToken = async (req: Request, res: Response) => {
   try {
     const cookies = req.cookies;
     if (!cookies?.jwt) {
-      return res
+      res
         .status(401)
         .json({ message: "Unauthorized: No refresh token provided." });
+      return;
     }
 
     const refreshToken = cookies.jwt;
@@ -173,14 +174,16 @@ export const refreshToken = async (req: Request, res: Response) => {
     });
 
     if (!foundUser) {
-      return res.status(403).json({ message: "Forbidden: User not found." });
+      res.status(403).json({ message: "Forbidden: User not found." });
+      return;
     }
 
     const tokenIndex = foundUser.refreshToken.indexOf(refreshToken);
     if (tokenIndex === -1) {
-      return res
+      res
         .status(403)
         .json({ message: "Forbidden: Refresh token not recognized." });
+      return;
     }
 
     const newRefreshTokenArray = foundUser.refreshToken.filter(
@@ -229,10 +232,10 @@ export const refreshToken = async (req: Request, res: Response) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    return res.status(200).json({ accessToken });
+    res.status(200).json({ accessToken });
   } catch (error) {
     console.error("Refresh token error:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -240,7 +243,8 @@ export const logOut = async (req: Request, res: Response) => {
   try {
     const cookies = req.cookies;
     if (!cookies?.jwt) {
-      return res.status(200).json({ message: "Already logged out" });
+      res.status(200).json({ message: "Already logged out" });
+      return;
     }
 
     const refreshToken = cookies.jwt;
@@ -255,7 +259,8 @@ export const logOut = async (req: Request, res: Response) => {
         sameSite: "lax",
         secure: true,
       });
-      return res.status(200).json({ message: "Logged out successfully" });
+      res.status(200).json({ message: "Logged out successfully" });
+      return;
     }
 
     // Remove the refresh token from the array
@@ -280,10 +285,10 @@ export const logOut = async (req: Request, res: Response) => {
       path: "/api/refresh",
     });
 
-    return res.status(200).json({ message: "Logged out successfully" });
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.error("Logout error:", error);
-    return res
+    res
       .status(500)
       .json({ message: "Internal server error during logout" });
   }

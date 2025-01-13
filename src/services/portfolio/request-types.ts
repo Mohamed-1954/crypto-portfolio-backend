@@ -1,12 +1,11 @@
+import type { Portfolio } from "@/types/schema";
 import type { Request } from "express";
 
 export interface GetPortfoliosRequest extends Request {
 }
 
 export interface CreatePortfolioRequest extends Request {
-  body: {
-    name: string;
-  };
+  body: Portfolio;
 }
 
 export interface GetPortfolioByIdRequest extends Request {
@@ -19,9 +18,7 @@ export interface UpdatePortfolioRequest extends Request {
   params: {
     id: string;
   };
-  body: {
-    name: string;
-  };
+  body: Partial<Portfolio>;
 }
 
 export interface DeletePortfolioRequest extends Request {

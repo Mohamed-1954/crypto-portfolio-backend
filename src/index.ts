@@ -4,6 +4,8 @@ import config from "@/config/config";
 import authService from "@/services/auth/routes"
 import portfolioService from "@/services/portfolio/routes";
 import { ensureToken } from "./services/auth/middlewares";
+import cryptoService from "@/services/crypto/routes"
+import portfolioItemService from "@/services/portfolio-item/routes"
 
 const app = express();
 
@@ -15,7 +17,9 @@ app.use(helmet());
 app.use("/auth", authService);
 app.use(ensureToken);
 app.use("/portfolio", portfolioService);
+app.use("/crypto", cryptoService);
+app.use("/portfolios/:id/items", portfolioItemService);
 
-app.listen(config.server.port, () => {
-  console.log(`Server is running on port ${config.server.port}`);
+app.listen(3000, () => {
+    console.log('Server is running on port 3000');
 });

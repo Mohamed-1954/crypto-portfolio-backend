@@ -32,8 +32,7 @@ export const createPortfolio = async (
   req: CreatePortfolioRequest,
   res: Response
 ) => {
-  const data = { ...req.body, userId: req.user?.id };
-  const { error, data: validatedData } = insertPortfolioSchema.safeParse(data);
+  const { error, data: validatedData } = insertPortfolioSchema.safeParse(req.body);
   if (error) {
     res.status(400).json({ message: "Error validating request body" });
     return;
@@ -69,7 +68,7 @@ export const getPortfolioById = async (
       res.status(404).json({ message: "Portfolio not found" });
       return;
     }
-    res.json(portfolio);
+    res.status(200).json(portfolio);
   } catch (error) {
     res.status(500).json({ message: "Error fetching portfolio", error });
   }
@@ -79,20 +78,29 @@ export const updatePortfolio = async (
   req: UpdatePortfolioRequest,
   res: Response
 ) => {
-  const data = { ...req.body, id: req.params.id, userId: req.user?.id };
-  const { error, data: validatedData } = updatePortfolioSchema.safeParse(data);
-  if (error) {
+  const userId = req.user?.id;
+  const { error: paramsError, data: id } = z
+    .string()
+    .safeParse(req.params);
+  if (paramsError) {
+    res.status(400).json({ error: "portfolio id is  required" });
+    return;
+  }
+
+  const { error: bodyError, data: validatedData } = updatePortfolioSchema.safeParse(req.body);
+  if (bodyError) {
     res.status(400).json({ message: "Error validating request body" });
     return;
   }
+
   try {
     const [updatedPortfolio] = await db
       .update(portfolios)
       .set({ name: validatedData.name })
       .where(
         and(
-          eq(portfolios.id, validatedData.id),
-          eq(portfolios.userId, validatedData.userId)
+          eq(portfolios.id, id),
+          eq(portfolios.userId, userId)
         )
       )
       .returning();
@@ -130,7 +138,7 @@ export const deletePortfolioById = async (
         .json({ message: "Portfolio not found or not authorized" });
       return;
     }
-    res.status(204).send();
+    res.status(200).json({ message: "Portfolio deleted" });
   } catch (error) {
     res.status(500).json({ message: "Error deleting portfolio", error });
   }

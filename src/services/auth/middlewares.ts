@@ -53,7 +53,7 @@ export const ensureAuthenticated = (
   res: Response,
   next: NextFunction
 ) => {
-  const {error} = requestUserSchema.safeParse(req.user)
+  const { error } = requestUserSchema.safeParse(req.user)
   if (error) {
     res.status(401).json({ message: "Unauthorized: User not authenticated" });
     return;

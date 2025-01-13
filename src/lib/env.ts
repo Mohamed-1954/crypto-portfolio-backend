@@ -15,6 +15,7 @@ const EnvSchema = z.object({
   DB_URL: z.string(),
   JWT_ACCESS_SECRET: z.string(),
   JWT_REFRESH_SECRET: z.string(),
+  CMC_API_URL: z.string(),
   CMC_API_KEY: z.string(),
 });
 

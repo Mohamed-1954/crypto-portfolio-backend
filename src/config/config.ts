@@ -20,6 +20,7 @@ const config = {
   },
   coinMarketCap: {
     apiKey: env.CMC_API_KEY,
+    apiUrl: env.CMC_API_URL,
   },
 };
 

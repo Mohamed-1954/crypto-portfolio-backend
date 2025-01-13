@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    container_name: crypto-portfolio-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://user:user@db:5432/crypto-portfolio-db
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+    command: pnpm run dev
+
+  db:
+    image: postgres:latest
+    container_name: crypto-portfolio-db
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=user
+      - POSTGRES_DB=crypto-portfolio-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+    driver: local
