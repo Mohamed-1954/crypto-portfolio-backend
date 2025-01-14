@@ -13,7 +13,7 @@ const portfolioItems = pgTable("portfolio_items", {
   portfolioId: uuid("portfolio_id")
     .references(() => portfolios.id, { onDelete: "cascade" })
     .notNull(),
-  cryptoId: varchar("crypto_id", { length: 255 }).notNull(),
+  cryptoId: integer("crypto_id").notNull(),
   quantity: integer("quantity").notNull(),
   acquisitionCost: integer("acquisition_cost").notNull(),
   createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),

@@ -32,9 +32,14 @@ export const createPortfolio = async (
   req: CreatePortfolioRequest,
   res: Response
 ) => {
+  const userId = req.user.id;
   const { error, data: validatedData } = insertPortfolioSchema.safeParse(req.body);
   if (error) {
     res.status(400).json({ message: "Error validating request body" });
+    return;
+  }
+  if (userId !== validatedData.userId) {
+    res.status(403).json({ message: "The data's userId doesn't correspond to the authenticated user" });
     return;
   }
   try {
@@ -81,9 +86,11 @@ export const updatePortfolio = async (
   const userId = req.user?.id;
   const { error: paramsError, data: id } = z
     .string()
-    .safeParse(req.params);
+    .safeParse(req.params.id);
+
+  console.log("id", id);
   if (paramsError) {
-    res.status(400).json({ error: "portfolio id is  required" });
+    res.status(400).json({ message: "Error validating request params" });
     return;
   }
 
@@ -138,7 +145,7 @@ export const deletePortfolioById = async (
         .json({ message: "Portfolio not found or not authorized" });
       return;
     }
-    res.status(200).json({ message: "Portfolio deleted" });
+    res.status(200).json({ message: "Portfolio deleted Successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error deleting portfolio", error });
   }

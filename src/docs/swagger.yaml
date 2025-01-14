@@ -1,0 +1,584 @@
+openapi: 3.0.0
+info:
+  title: Crypto Portfolio Management System Express API with Swagger
+  version: 0.1.0
+  description:
+    This is a crypto portfolio management system API application made with Express
+    and documented with Swagger.
+  license:
+    name: MIT
+    url: https://spdx.org/licenses/MIT.html
+  contact:
+    name: Your Name
+    url: https://crypto-platform.com
+    email: crypto-platform@email.com
+servers:
+  - url: http://localhost:3000
+security:
+  - bearerAuth: [] # use the same name as above
+paths:
+  /portfolios:
+    get:
+      summary: Get all portfolios
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Portfolio"
+        "500":
+          description: Internal server error
+    post:
+      summary: Create a new portfolio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePortfolio"
+      responses:
+        "201":
+          description: Portfolio created successfully
+        "400":
+          description: Bad request
+  /portfolios/{id}:
+    get:
+      summary: Get portfolio by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of the portfolio to retrieve
+      responses:
+        "200":
+          description: Successful response
+        "404":
+          description: Portfolio not found
+        "500":
+          description: Internal server error
+    put:
+      summary: Update a portfolio
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of the portfolio to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePortfolio"
+      responses:
+        "200":
+          description: Portfolio updated successfully
+        "400":
+          description: Bad request
+        "404":
+          description: Portfolio not found
+    delete:
+      summary: Delete portfolio by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of the portfolio to delete
+      responses:
+        "200":
+          description: Portfolio deleted successfully
+        "404":
+          description: Portfolio not found
+        "500":
+          description: Internal server error
+  /portfolios/{id}/items/:
+    post:
+      summary: Add a cryptocurrency to a portfolio.
+      description: Adds a new cryptocurrency item to a specific portfolio.
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          description: ID of the portfolio.
+          schema:
+            type: string
+      requestBody:
+        description: Details of the cryptocurrency to add to the portfolio.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cryptoId:
+                  type: string
+                  description: ID of the cryptocurrency.
+                  example: "BTC"
+                quantity:
+                  type: integer
+                  description: Quantity of the cryptocurrency to add.
+                  example: 10
+                acquisitionCost:
+                  type: integer
+                  description: Acquisition cost of the cryptocurrency.
+                  example: 50000
+              required:
+                - cryptoId
+                - quantity
+                - acquisitionCost
+      responses:
+        '201':
+          description: Cryptocurrency item successfully added.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: ID of the newly added portfolio item.
+        '400':
+          description: Invalid request body or missing parameters.
+        '500':
+          description: Internal server error.
+  /portfolios/{id}/items/{item_id}:
+    put:
+      summary: Update an existing cryptocurrency in a portfolio.
+      description: Updates details of a specific cryptocurrency in the portfolio.
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          description: ID of the portfolio.
+          schema:
+            type: string
+        - name: item_id
+          in: query
+          required: true
+          description: ID of the portfolio item to update.
+          schema:
+            type: string
+      requestBody:
+        description: Updated details of the portfolio item.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  description: Updated quantity of the cryptocurrency.
+                acquisitionCost:
+                  type: integer
+                  description: Updated acquisition cost.
+              required:
+                - quantity
+                - acquisitionCost
+      responses:
+        '200':
+          description: Portfolio item successfully updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: ID of the updated portfolio item.
+        '400':
+          description: Invalid request body or missing parameters.
+        '404':
+          description: Portfolio item not found.
+        '500':
+          description: Internal server error.
+    delete:
+      summary: Delete a cryptocurrency from a portfolio.
+      description: Removes a specific cryptocurrency item from the portfolio.
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          description: ID of the portfolio.
+          schema:
+            type: string
+        - name: item_id
+          in: query
+          required: true
+          description: ID of the portfolio item to delete.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Portfolio item successfully deleted.
+        '404':
+          description: Portfolio item not found.
+        '500':
+          description: Internal server error.
+  /auth/sign-up:
+    post:
+      summary: Register a new user
+      security: [] # No security
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpRequest"
+      responses:
+        "201":
+          description: User registered successfully
+        "400":
+          description: Validation error or duplicate email
+        "500":
+          description: Internal server error
+  /auth/sign-in:
+    post:
+      summary: User login
+      security: [] # No security
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignInResponse"
+        "400":
+          description: Validation error
+        "401":
+          description: Invalid credentials
+        "500":
+          description: Internal server error
+  /auth/refresh-token:
+    post:
+      summary: Refresh access token
+      responses:
+        "200":
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RefreshTokenResponse"
+        "401":
+          description: No refresh token provided
+        "403":
+          description: Invalid or expired refresh token
+        "500":
+          description: Internal server error
+  /auth/log-out:
+    post:
+      summary: Logout user
+      responses:
+        "200":
+          description: User logged out successfully
+        "500":
+          description: Internal server error
+  /cryptos:
+    get:
+      summary: Get a list of cryptocurrencies
+      description: Fetch the latest listings of cryptocurrencies from CoinMarketCap.
+      responses:
+        '200':
+          description: A list of cryptocurrencies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CryptoCurrency'
+        '500':
+          description: Internal server error
+
+  /cryptos/{id}:
+    get:
+      summary: Get details of a specific cryptocurrency
+      description: Fetch detailed information about a specific cryptocurrency by its ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the cryptocurrency
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Details of the cryptocurrency
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CryptoCurrency'
+        '400':
+          description: Invalid cryptocurrency ID
+        '500':
+          description: Internal server error
+  
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "Provide the token in the Authorization header as 'Bearer <token>'"
+  schemas:
+    Portfolio:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreatePortfolio:
+      type: object
+      required:
+        - userId
+        - name
+      properties:
+        userId:
+          type: string
+        name:
+          type: string
+    UpdatePortfolio:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+    SignUpRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          example: strong_password_123
+    SignInRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          example: strong_password_123
+    SignInResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Login Successful
+        accessToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    RefreshTokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: a1234567-89ab-cdef-0123-456789abcdef
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        createdAt:
+          type: string
+          format: date-time
+          example: 2023-10-15T14:48:00.000Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2023-10-15T14:48:00.000Z
+        refreshToken:
+          type: array
+          items:
+            type: string
+          example:
+            - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    CryptoCurrency:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the cryptocurrency
+          example: 1
+        name:
+          type: string
+          description: Name of the cryptocurrency
+          example: Bitcoin
+        symbol:
+          type: string
+          description: Symbol of the cryptocurrency
+          example: BTC
+        slug:
+          type: string
+          description: URL-friendly identifier
+          example: bitcoin
+        cmc_rank:
+          type: integer
+          description: Rank of the cryptocurrency on CoinMarketCap
+          example: 1
+        num_market_pairs:
+          type: integer
+          description: Number of market pairs available
+          example: 500
+        circulating_supply:
+          type: number
+          description: Circulating supply of the cryptocurrency
+          example: 19000000
+        total_supply:
+          type: number
+          description: Total supply of the cryptocurrency
+          example: 21000000
+        max_supply:
+          type: number
+          description: Maximum supply of the cryptocurrency
+          example: 21000000
+        infinite_supply:
+          type: boolean
+          description: Indicates if the cryptocurrency has an infinite supply
+          example: false
+        last_updated:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: 2023-01-01T00:00:00Z
+        date_added:
+          type: string
+          format: date-time
+          description: Date the cryptocurrency was added
+          example: 2013-04-28T00:00:00Z
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags associated with the cryptocurrency
+          example: ["mineable", "store-of-value"]
+        platform:
+          type: string
+          nullable: true
+          description: Platform associated with the cryptocurrency
+          example: Ethereum
+        self_reported_circulating_supply:
+          type: number
+          nullable: true
+          description: Self-reported circulating supply
+          example: 19000000
+        self_reported_market_cap:
+          type: number
+          nullable: true
+          description: Self-reported market capitalization
+          example: 500000000
+        quote:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              price:
+                type: number
+                description: Current price of the cryptocurrency
+                example: 50000
+              volume_24h:
+                type: number
+                description: 24-hour trading volume
+                example: 1000000000
+              volume_change_24h:
+                type: number
+                description: Percentage change in trading volume over the last 24 hours
+                example: -5.0
+              percent_change_1h:
+                type: number
+                description: Percentage change in price over the last hour
+                example: 0.1
+              percent_change_24h:
+                type: number
+                description: Percentage change in price over the last 24 hours
+                example: 1.5
+              percent_change_7d:
+                type: number
+                description: Percentage change in price over the last 7 days
+                example: 10.0
+              market_cap:
+                type: number
+                description: Current market capitalization
+                example: 1000000000
+              market_cap_dominance:
+                type: number
+                description: Market cap dominance percentage
+                example: 60.0
+              fully_diluted_market_cap:
+                type: number
+                description: Fully diluted market capitalization
+                example: 2000000000
+              last_updated:
+                type: string
+                format: date-time
+                description: Last update timestamp
+                example: 2023-01-01T00:00:00Z
+    PortfolioItem:
+        type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier for the portfolio item.
+          portfolioId:
+            type: string
+            description: ID of the portfolio the item belongs to.
+          cryptoId:
+            type: string
+            description: ID of the cryptocurrency.
+          quantity:
+            type: integer
+            description: Quantity of the cryptocurrency.
+          acquisitionCost:
+            type: integer
+            description: Acquisition cost of the cryptocurrency.
+          createdAt:
+            type: string
+            format: date-time
+            description: Timestamp when the portfolio item was created.
+          updatedAt:
+            type: string
+            format: date-time
+            description: Timestamp when the portfolio item was last updated.
+

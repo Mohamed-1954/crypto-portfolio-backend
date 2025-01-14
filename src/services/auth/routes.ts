@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { logOut, refreshToken, signIn, signUp } from "./handlers";
+import { signOut, refreshToken, signIn, signUp } from "./handlers";
 
 const router = Router();
 
@@ -9,6 +9,6 @@ router.post("/sign-in", signIn);
 
 router.post("/refresh-token", refreshToken);
 
-router.post("/log-out", logOut);
+router.post("/sign-out", signOut);
 
 export default router;

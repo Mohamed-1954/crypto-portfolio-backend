@@ -61,19 +61,21 @@ export const signIn = async (req: SignInRequest, res: Response) => {
       return;
     }
 
-    const { email, password } = validatedData;
-
     const existingUser = await db.query.users.findFirst({
-      where: eq(users.email, email),
+      where: eq(users.email, validatedData.email),
     });
+
     if (!existingUser) {
       res.status(401).json({ message: "Invalid email or password" });
       return;
     }
 
-    const passwordMatch = await bcrypt.compare(password, existingUser.password);
+    const passwordMatch = await bcrypt.compare(
+      validatedData.password,
+      existingUser.password
+    );
     if (!passwordMatch) {
-      res.status(401).json({ message: "Invalid email or password" });
+      res.status(401).json({ message: "Wrong credentials" });
       return;
     }
 
@@ -85,7 +87,7 @@ export const signIn = async (req: SignInRequest, res: Response) => {
     const accessToken = await signJwt({
       user: payload,
       secret: config.jwt.accessTokenSecret,
-      expiresAt: "5mins",
+      expiresAt: "10mins",
     });
     const newRefreshToken = await signJwt({
       user: payload,
@@ -111,7 +113,7 @@ export const signIn = async (req: SignInRequest, res: Response) => {
       res.clearCookie("jwt", {
         httpOnly: true,
         sameSite: "lax",
-        secure: true,
+        secure: false,
       });
     }
 
@@ -124,7 +126,7 @@ export const signIn = async (req: SignInRequest, res: Response) => {
 
     res.cookie("jwt", newRefreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: "lax",
       maxAge: 24 * 60 * 60 * 1000,
     });
@@ -142,6 +144,7 @@ export const signIn = async (req: SignInRequest, res: Response) => {
 export const refreshToken = async (req: Request, res: Response) => {
   try {
     const cookies = req.cookies;
+    console.log("cookies", cookies);
     if (!cookies?.jwt) {
       res
         .status(401)
@@ -153,7 +156,7 @@ export const refreshToken = async (req: Request, res: Response) => {
 
     res.clearCookie("jwt", {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: "lax",
     });
 
@@ -198,7 +201,7 @@ export const refreshToken = async (req: Request, res: Response) => {
     const accessToken = await signJwt({
       user: payload,
       secret: config.jwt.accessTokenSecret,
-      expiresAt: "5mins",
+      expiresAt: "10mins",
     });
 
     const newRefreshToken = await signJwt({
@@ -227,7 +230,7 @@ export const refreshToken = async (req: Request, res: Response) => {
 
     res.cookie("jwt", newRefreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: "lax",
       maxAge: 24 * 60 * 60 * 1000,
     });
@@ -239,7 +242,7 @@ export const refreshToken = async (req: Request, res: Response) => {
   }
 };
 
-export const logOut = async (req: Request, res: Response) => {
+export const signOut = async (req: Request, res: Response) => {
   try {
     const cookies = req.cookies;
     if (!cookies?.jwt) {
@@ -257,7 +260,7 @@ export const logOut = async (req: Request, res: Response) => {
       res.clearCookie("jwt", {
         httpOnly: true,
         sameSite: "lax",
-        secure: true,
+        secure: false,
       });
       res.status(200).json({ message: "Logged out successfully" });
       return;
@@ -281,8 +284,7 @@ export const logOut = async (req: Request, res: Response) => {
     res.clearCookie("jwt", {
       httpOnly: true,
       sameSite: "lax",
-      secure: true,
-      path: "/api/refresh",
+      secure: false,
     });
 
     res.status(200).json({ message: "Logged out successfully" });
