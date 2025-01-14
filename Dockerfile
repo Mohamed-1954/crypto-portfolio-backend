@@ -8,10 +8,7 @@ WORKDIR /usr/src/app
 COPY package.json pnpm-lock.yaml* ./
 
 # Install pnpm globally
-RUN npm install -g pnpm
-
-# Install dependencies using pnpm
-RUN pnpm install
+RUN npm install -g pnpm && pnpm install
 
 # Copy the rest of the application code into the container
 COPY . .
