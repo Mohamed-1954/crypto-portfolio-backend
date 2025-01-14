@@ -1,5 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
 import type  { RequestUser } from "../middlewares";
+import crypto from "node:crypto";
 
 export function generateKey(secret: string) {
   return new TextEncoder().encode(secret);
@@ -13,9 +14,11 @@ export interface SignJwt {
 
 export async function signJwt({ user, secret, expiresAt }: SignJwt) {
   const key = generateKey(secret);
+  const jti = crypto.randomBytes(32).toString("hex");
   return new SignJWT(user)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
+    .setJti(jti)
     .setExpirationTime(expiresAt)
     .sign(key);
 }
