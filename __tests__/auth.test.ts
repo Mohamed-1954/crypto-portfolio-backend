@@ -30,7 +30,7 @@ describe("Auth Endpoints", () => {
             // Mock bcrypt hash
             mockBcrypt.hash = jest.fn().mockResolvedValue("hashedPassword");
 
-            mockDb.insert.mockResolvedValue([{ id: "user-id-123" }]);
+            mockDb.insert.mockResolvedValue([{ id: "user-id-123" }] as never);
 
             const response = await request(app).post("/auth/sign-up").send(newUser);
 
@@ -75,7 +75,7 @@ describe("Auth Endpoints", () => {
             });
 
             // Mock bcrypt compare
-            mockBcrypt.compare.mockResolvedValue(true);
+            mockBcrypt.compare.mockResolvedValue(true as never);
 
             // Mock JWT signing
             mockSignJwt
@@ -83,7 +83,7 @@ describe("Auth Endpoints", () => {
                 .mockResolvedValueOnce("refreshToken");
 
             // Mock DB update for refresh tokens
-            mockDb.update.mockResolvedValue(undefined);
+            mockDb.update.mockResolvedValue(undefined as never);
 
             const response = await request(app).post("/auth/sign-in").send(loginUser);
 

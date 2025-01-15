@@ -3,7 +3,7 @@ CREATE TABLE "portfolio_items" (
 	"portfolio_id" uuid NOT NULL,
 	"crypto_id" integer NOT NULL,
 	"quantity" integer NOT NULL,
-	"acquisition_cost" integer NOT NULL,
+	"acquisition_cost" real NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -22,7 +22,7 @@ CREATE TABLE "users" (
 	"password" varchar(255) NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"refresh_token" text[]
+	"refresh_token" text[] DEFAULT '{}' NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "portfolio_items" ADD CONSTRAINT "portfolio_items_portfolio_id_portfolios_id_fk" FOREIGN KEY ("portfolio_id") REFERENCES "public"."portfolios"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

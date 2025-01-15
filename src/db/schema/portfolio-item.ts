@@ -2,9 +2,9 @@ import { relations } from "drizzle-orm";
 import {
   integer,
   pgTable,
+  real,
   timestamp,
   uuid,
-  varchar,
 } from "drizzle-orm/pg-core";
 import portfolios from "./portfolio";
 
@@ -15,7 +15,7 @@ const portfolioItems = pgTable("portfolio_items", {
     .notNull(),
   cryptoId: integer("crypto_id").notNull(),
   quantity: integer("quantity").notNull(),
-  acquisitionCost: integer("acquisition_cost").notNull(),
+  acquisitionCost: real("acquisition_cost").notNull(),
   createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
 });

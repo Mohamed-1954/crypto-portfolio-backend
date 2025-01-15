@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { addCryptoToPortfolio, deleteCryptoFromPortfolio, updateCryptoInPortfolio } from "./handlers";
+import { ensureAuthenticated } from "../auth/middlewares";
 
 const router = Router({ mergeParams: true });
+
+router.use(ensureAuthenticated)
 
 router.post("/", addCryptoToPortfolio);
 

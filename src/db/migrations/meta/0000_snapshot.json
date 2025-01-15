@@ -1,5 +1,5 @@
 {
-  "id": "c58858d6-2b08-472a-bbca-7468d65677ce",
+  "id": "25f8e382-39dd-487c-b310-8b7906f10111",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -35,7 +35,7 @@
         },
         "acquisition_cost": {
           "name": "acquisition_cost",
-          "type": "integer",
+          "type": "real",
           "primaryKey": false,
           "notNull": true
         },
@@ -177,7 +177,8 @@
           "name": "refresh_token",
           "type": "text[]",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "'{}'"
         }
       },
       "indexes": {},
