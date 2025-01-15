@@ -23,7 +23,7 @@
         },
         "crypto_id": {
           "name": "crypto_id",
-          "type": "varchar(255)",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },

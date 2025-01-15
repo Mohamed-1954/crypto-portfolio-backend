@@ -14,26 +14,23 @@ import yaml from "yaml";
 import path from "node:path";
 const app = express();
 
+app.use(helmet());
+app.disable("x-powered-by");
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
+    origin: "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
 
-app.use(helmet());
-
-app.use("/auth", authService);
-app.use(ensureToken);
-app.use("/portfolios", portfolioService);
-app.use("/cryptos", cryptoService);
-app.use("/portfolios/:id/items", portfolioItemService);
-
-const yamlFile = fs.readFileSync(path.join(__dirname, "./docs/swagger.yaml"), { encoding: "utf-8" });
+const yamlFile = fs.readFileSync(path.join(__dirname, "./docs/swagger.yaml"), {
+  encoding: "utf-8",
+});
 const swaggerOptions = yaml.parse(yamlFile);
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerOptions));
@@ -42,6 +39,12 @@ app.get("/docs.json", (_, res) => {
   res.setHeader("Content-Type", "application/json");
   res.send(swaggerOptions);
 });
+
+app.use("/auth", authService);
+app.use(ensureToken);
+app.use("/portfolios", portfolioService);
+app.use("/cryptos", cryptoService);
+app.use("/portfolios/:id/items", portfolioItemService);
 
 app.listen(config.server.port, () => {
   console.log(`Server is running on port ${config.server.port}`);

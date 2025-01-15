@@ -89,6 +89,7 @@ export const signIn = async (req: SignInRequest, res: Response) => {
       secret: config.jwt.accessTokenSecret,
       expiresAt: "10mins",
     });
+    
     const newRefreshToken = await signJwt({
       user: payload,
       secret: config.jwt.refreshTokenSecret,

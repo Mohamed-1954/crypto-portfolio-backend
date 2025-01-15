@@ -1,7 +1,7 @@
 CREATE TABLE "portfolio_items" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"portfolio_id" uuid NOT NULL,
-	"crypto_id" varchar(255) NOT NULL,
+	"crypto_id" integer NOT NULL,
 	"quantity" integer NOT NULL,
 	"acquisition_cost" integer NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
